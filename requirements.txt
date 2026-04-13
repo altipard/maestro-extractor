@@ -1,0 +1,7 @@
+grpcio
+grpcio-tools
+grpcio-reflection
+openai
+markitdown[pptx, docx, xlsx, pdf]
+extract-msg
+markdownify
