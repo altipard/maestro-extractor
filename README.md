@@ -2,6 +2,18 @@
 
 gRPC service for document text extraction. Converts PDF, DOCX, PPTX, XLSX, images, emails (MSG/EML), and other document formats into clean Markdown text.
 
+## Why gRPC?
+
+Document extraction deals with **large binary payloads** — PDFs, images, Office files. gRPC is the right protocol here because:
+
+- **Binary-native** — Protobuf sends file bytes directly without Base64 encoding overhead. A 10 MB PDF stays 10 MB over the wire, not 13.3 MB as it would with JSON/REST.
+- **Streaming-ready** — gRPC supports bidirectional streaming out of the box. While this service currently uses simple unary calls, it can evolve to stream chunks of extracted text as they're processed without changing the transport layer.
+- **Strongly typed contracts** — The `.proto` file is the single source of truth for the API. Clients in any language (Python, Go, TypeScript, Rust) can generate type-safe stubs from it — no hand-written API clients, no runtime validation.
+- **Connection multiplexing** — HTTP/2 under the hood means multiple concurrent requests share one TCP connection. Maestro can fire off several extraction requests in parallel without connection pool overhead.
+- **Lingua franca for microservices** — If you later want to write a faster extractor in Go or Rust, you swap the implementation behind the same `.proto` contract. No client changes needed.
+
+For Maestro's use case — sending documents from the platform to a sidecar extraction service — gRPC is leaner, faster, and more type-safe than REST.
+
 ## Architecture
 
 ```
